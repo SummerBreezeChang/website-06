@@ -113,7 +113,7 @@ export default function FeaturedShowcase({ projects }: Props) {
             {projects.map((p) => (
               <Link
                 key={p.slug}
-                href={`/projects/${p.slug}`}
+                href={`/projects/${p.slug}?from=home`}
                 className="h-full shrink-0 relative flex flex-col justify-end group"
                 style={{
                   backgroundColor: p.color,

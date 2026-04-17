@@ -296,7 +296,7 @@ export default function Home() {
             {featured.map((p, i) => (
               <Link
                 key={p.slug}
-                href={`/projects/${p.slug}`}
+                href={`/projects/${p.slug}?from=home`}
                 className="rounded-2xl overflow-hidden relative cursor-pointer group"
                 style={{
                   gridColumn:      bento[i]?.col,
@@ -407,8 +407,8 @@ export default function Home() {
                   transform: servicesVisible
                     ? undefined
                     : `translateY(${20 + idx * 8}px)`,
-                  transitionDuration: "600ms",
-                  transitionDelay: `${520 + idx * 160}ms`,
+                  transitionDuration: "450ms",
+                  transitionDelay: `${360 + idx * 120}ms`,
                 }}
               >
                 <h4 className="text-[34px] md:text-[38px] font-medium leading-none tracking-tight mb-2">{s.t}</h4>
@@ -429,11 +429,12 @@ export default function Home() {
           </div>
 
           <div
-            className="mt-24 md:mt-28 flex justify-center transition-all duration-700"
+            className="mt-24 md:mt-28 flex justify-center transition-all duration-500"
             style={{
               opacity: servicesVisible ? 1 : 0,
               transform: servicesVisible ? "translateY(0)" : "translateY(14px)",
-              transitionDelay: "900ms",
+              /* Same beat as third card (idx 2): 360 + 2*120 = 600ms */
+              transitionDelay: "600ms",
             }}
           >
             <Link

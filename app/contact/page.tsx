@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Navigation from "@/components/navigation"
 
-const NOTION_URL = "https://summerchangco.notion.site/2552d5cd4ef481e18881c88cefe41e03?pvs=143"
+const NOTION_URL = "https://summerchangco.notion.site/2552d5cd4ef481e18881c88cefe41e03"
 
 const BUDGET_OPTIONS = [
   "Under $1,000",
@@ -25,20 +25,31 @@ const TIMELINE_OPTIONS = [
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
+    setError(null)
     const form = e.currentTarget
     const data = Object.fromEntries(new FormData(form))
 
-    await fetch("https://formspree.io/f/xkgjpebp", {
+    const res = await fetch("/api/contact", {
       method: "POST",
-      headers: { Accept: "application/json" },
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify(data),
     })
 
     setLoading(false)
+    if (!res.ok) {
+      const j = (await res.json().catch(() => ({}))) as { error?: string }
+      setError(
+        typeof j.error === "string"
+          ? j.error
+          : "Could not send your inquiry. Try again, or use the Notion link below."
+      )
+      return
+    }
     setSubmitted(true)
   }
 
@@ -46,7 +57,7 @@ export default function ContactPage() {
     <main className="min-h-screen bg-background">
       <Navigation />
 
-      <section className="px-4 pt-32 pb-20 md:pt-36 md:pb-28">
+      <section className="px-4 pt-[188px] pb-20 md:pt-[220px] md:pb-28">
         <div className="max-w-2xl mx-auto">
 
           {submitted ? (
@@ -130,22 +141,29 @@ export default function ContactPage() {
                   />
                 </Field>
 
-                <div className="flex items-center gap-4 pt-2">
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="interactive-glow-btn inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
-                  >
-                    {loading ? "Sending…" : "Send Inquiry"}
-                  </button>
-                  <a
-                    href={NOTION_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors"
-                  >
-                    Or fill out on Notion →
-                  </a>
+                <div className="flex flex-col gap-2 pt-2">
+                  <div className="flex flex-wrap items-center gap-4">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="interactive-glow-btn inline-flex items-center justify-center px-8 py-3.5 rounded-full bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
+                    >
+                      {loading ? "Sending…" : "Send Inquiry"}
+                    </button>
+                    <a
+                      href={NOTION_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-4 transition-colors"
+                    >
+                      Or fill out on Notion →
+                    </a>
+                  </div>
+                  {error && (
+                    <p className="text-sm text-destructive" role="alert">
+                      {error}
+                    </p>
+                  )}
                 </div>
               </form>
             </>

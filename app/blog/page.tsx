@@ -6,7 +6,7 @@ export default function BlogPage() {
     <main className="min-h-screen bg-background">
       <Navigation />
 
-      <section className="px-4 pt-36 pb-12 md:pt-40">
+      <section className="px-4 pt-[188px] pb-12 md:pt-[220px]">
         <div className="max-w-6xl mx-auto">
           <div className="rounded-2xl border bg-card overflow-hidden">
             <iframe

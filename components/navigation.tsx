@@ -56,6 +56,15 @@ export default function Navigation() {
     document.documentElement.classList.toggle("dark", next)
   }
 
+  /** Dark + transparent nav → light text; dark + glass pill → dark text; light theme unchanged */
+  const navLinkColor = darkMode
+    ? scrolled
+      ? "rgba(17,24,39,0.88)"
+      : "rgba(255,255,255,0.92)"
+    : scrolled
+      ? "#667085"
+      : "rgba(41,41,41,0.86)"
+
   return (
     <>
       {/* ── Main nav ── */}
@@ -107,7 +116,7 @@ export default function Navigation() {
               <button
                 onClick={() => setCaseOpen((v) => !v)}
                 className="inline-flex items-center gap-1.5 text-[14px] font-medium transition-colors"
-                style={{ color: darkMode ? "rgba(17,24,39,0.88)" : scrolled ? "#667085" : "rgba(41,41,41,0.86)" }}
+                style={{ color: navLinkColor }}
               >
                 Case Studies
               </button>
@@ -125,7 +134,7 @@ export default function Navigation() {
                       {caseStudies.map((item) => (
                         <Link
                           key={item!.slug}
-                          href={`/projects/${item!.slug}`}
+                          href={`/projects/${item!.slug}?from=home`}
                           onClick={() => setCaseOpen(false)}
                           className="flex items-stretch gap-4 rounded-xl px-2 py-2.5 hover:bg-black/[0.03] transition-colors"
                         >
@@ -157,14 +166,14 @@ export default function Navigation() {
             <Link
               href="/about"
               className="font-medium transition-colors duration-300"
-              style={{ fontSize: "14px", color: darkMode ? "rgba(17,24,39,0.88)" : scrolled ? "#667085" : "rgba(41,41,41,0.86)" }}
+              style={{ fontSize: "14px", color: navLinkColor }}
             >
               About
             </Link>
             <Link
               href="/blog"
               className="font-medium transition-colors duration-300"
-              style={{ fontSize: "14px", color: darkMode ? "rgba(17,24,39,0.88)" : scrolled ? "#667085" : "rgba(41,41,41,0.86)" }}
+              style={{ fontSize: "14px", color: navLinkColor }}
             >
               Blog
             </Link>
@@ -177,7 +186,11 @@ export default function Navigation() {
               alt="Summer Chang"
               className="h-7 w-auto transition-all duration-300"
               style={{
-                filter: scrolled ? "none" : "brightness(0) saturate(100%)",
+                filter: scrolled
+                  ? "none"
+                  : darkMode
+                    ? "brightness(0) invert(1)"
+                    : "brightness(0) saturate(100%)",
                 opacity: scrolled ? 1 : 0.9,
               }}
             />
@@ -194,7 +207,9 @@ export default function Navigation() {
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
-              style={{ color: scrolled ? "#1a1a1a" : "#fff" }}
+              style={{
+                color: darkMode ? (scrolled ? "#1a1a1a" : "rgba(255,255,255,0.92)") : scrolled ? "#1a1a1a" : "#fff",
+              }}
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16" />
             </svg>

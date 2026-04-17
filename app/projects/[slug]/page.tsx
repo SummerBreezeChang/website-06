@@ -6,7 +6,7 @@ import { SectionRenderer } from "@/components/project-sections"
 import { projects } from "@/lib/projects-v2"
 
 export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }))
+  return projects.filter((p) => !p.externalUrl).map((p) => ({ slug: p.slug }))
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -16,22 +16,35 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return { title: `${p.title} — Summer Chang`, description: p.subtitle }
 }
 
-export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProjectPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ from?: string }>
+}) {
   const { slug } = await params
+  const { from } = await searchParams
   const p = projects.find((x) => x.slug === slug)
-  if (!p) notFound()
+  if (!p || p.externalUrl) notFound()
 
-  const idx = projects.findIndex((x) => x.slug === p.slug)
-  const prev = idx > 0 ? projects[idx - 1] : null
-  const next = idx < projects.length - 1 ? projects[idx + 1] : null
+  const fromMore = from === "more"
+  const fromQuery = fromMore ? "from=more" : "from=home"
+  const backHref = fromMore ? "/more" : "/#projects"
+  const backLabel = fromMore ? "Back to all projects" : "Back to home"
+
+  const navigable = projects.filter((x) => !x.externalUrl)
+  const navIdx = navigable.findIndex((x) => x.slug === p.slug)
+  const prev = navIdx > 0 ? navigable[navIdx - 1] : null
+  const next = navIdx >= 0 && navIdx < navigable.length - 1 ? navigable[navIdx + 1] : null
 
   return (
     <main className="min-h-screen bg-background">
       <Navigation />
 
-      <div className="max-w-[900px] mx-auto px-6 md:px-8">
-        <Link href="/#projects" className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors pt-[156px] pb-8">
-          <ArrowLeft className="w-3.5 h-3.5" /> Back to all projects
+      <div className="mx-auto w-full max-w-6xl px-4 md:px-8 pt-[188px] md:pt-[220px]">
+        <Link href={backHref} className="inline-flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors pb-8">
+          <ArrowLeft className="w-3.5 h-3.5" /> {backLabel}
         </Link>
 
         {/* Hero: Title left, Meta sidebar right */}
@@ -103,13 +116,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {/* Prev / Next */}
         <div className="flex items-center justify-between py-6 border-t border-border mt-12 mb-16">
           {prev ? (
-            <Link href={`/projects/${prev.slug}`} className="group flex items-center gap-3 text-sm">
+            <Link href={`/projects/${prev.slug}?${fromQuery}`} className="group flex items-center gap-3 text-sm">
               <ArrowLeft className="w-4 h-4 text-muted-foreground group-hover:-translate-x-1 transition-transform" />
               <div><p className="text-[10px] text-muted-foreground">Previous</p><p className="font-medium">{prev.title}</p></div>
             </Link>
           ) : <div />}
           {next ? (
-            <Link href={`/projects/${next.slug}`} className="group flex items-center gap-3 text-sm text-right">
+            <Link href={`/projects/${next.slug}?${fromQuery}`} className="group flex items-center gap-3 text-sm text-right">
               <div><p className="text-[10px] text-muted-foreground">Next</p><p className="font-medium">{next.title}</p></div>
               <ArrowUpRight className="w-4 h-4 text-muted-foreground group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </Link>
