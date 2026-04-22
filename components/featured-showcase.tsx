@@ -21,6 +21,20 @@ function bentoIconSrc(slug: string) {
   return `/projects/${slug}/bento-icon.png`
 }
 
+function showcaseVideoSrc(slug: string) {
+  if (slug === "bookee") return "/projects/bookee/bookee-showcase.mp4?v=20260422-145155"
+  if (slug === "playdates") return "/projects/playdates/playdates-showcase.mp4?v=20260422-1006"
+  if (slug === "petcard") return "/projects/petcard/petcard-showcase.mp4?v=20260422-133413"
+  if (slug === "mina") return "/projects/mina/mina-showcase.mp4?v=20260422-134052"
+  return null
+}
+
+function showcaseMediaPositionClass(slug: string) {
+  if (slug === "petcard") return "absolute inset-0 h-full w-full object-contain"
+  if (slug === "mina") return "absolute right-0 bottom-0 h-full w-full object-cover"
+  return "absolute inset-0 h-full w-full object-cover"
+}
+
 export default function FeaturedShowcase({ projects }: Props) {
   const N = projects.length
   // Vertical scroll needed to advance one project card (as a fraction of viewport height).
@@ -111,13 +125,25 @@ export default function FeaturedShowcase({ projects }: Props) {
               >
                 {/* Image-first: no text overlay — matches Section 2 bento readability */}
                 <div className="relative flex-1 min-h-[52vh] md:min-h-[58vh] rounded-md overflow-hidden">
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{
-                      backgroundColor: p.color,
-                      backgroundImage: `url(${getBentoImage(p.slug)}), url(${p.thumbnail})`,
-                    }}
-                  />
+                  {showcaseVideoSrc(p.slug) ? (
+                    <video
+                      className={showcaseMediaPositionClass(p.slug)}
+                      src={showcaseVideoSrc(p.slug) ?? undefined}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      preload="metadata"
+                    />
+                  ) : (
+                    <div
+                      className="absolute inset-0 bg-cover bg-center"
+                      style={{
+                        backgroundColor: p.color,
+                        backgroundImage: `url(${getBentoImage(p.slug)}), url(${p.thumbnail})`,
+                      }}
+                    />
+                  )}
                 </div>
 
                 <div className="relative z-10 shrink-0 px-5 py-4 md:px-8 md:py-5 bg-transparent">
