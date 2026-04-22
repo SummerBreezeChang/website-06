@@ -31,7 +31,6 @@ export default function FeaturedShowcase({ projects }: Props) {
   const sectionRef = useRef<HTMLElement>(null)
   const trackRef   = useRef<HTMLDivElement>(null)
   const counterRef = useRef<HTMLDivElement>(null)
-  const dotRefs    = useRef<(HTMLDivElement | null)[]>([])
 
   useEffect(() => {
     const update = () => {
@@ -48,27 +47,24 @@ export default function FeaturedShowcase({ projects }: Props) {
       const maxScroll   = sectionH - winH
       if (maxScroll <= 0) return
 
-      const sy       = window.scrollY
+      const sy = window.scrollY
       const progress = Math.max(0, Math.min(1, (sy - sectionTop) / maxScroll))
+      const rawIndex = progress * (N - 1)
+      // Snap to project index so each scroll step advances one grouped card state.
+      const active = Math.min(N - 1, Math.max(0, Math.round(rawIndex)))
 
       // Pixel-based translateX — clamp to actual max to avoid blank tail on last card.
       const stepW = viewportW + CARD_GAP_PX
-      const rawTx = progress * (N - 1) * stepW
+      const rawTx = active * stepW
       const maxTx = Math.max(0, track.scrollWidth - viewportW)
       const tx = Math.min(rawTx, maxTx)
       track.style.transform = `translate3d(-${tx}px, 0, 0)`
+      track.style.transition = "transform 360ms cubic-bezier(0.22, 1, 0.36, 1)"
 
-      // Update counter and dots imperatively
-      const active = Math.min(N - 1, Math.round(progress * (N - 1)))
+      // Update counter imperatively
       if (counterRef.current) {
         counterRef.current.textContent =
           `${String(active + 1).padStart(2, "0")} / ${String(N).padStart(2, "0")}`
-      }
-      for (let j = 0; j < dotRefs.current.length; j++) {
-        const dot = dotRefs.current[j]
-        if (!dot) continue
-        dot.style.width           = j === active ? "24px" : "8px"
-        dot.style.backgroundColor = j === active ? "#ffffff" : "rgba(255,255,255,0.3)"
       }
     }
 
