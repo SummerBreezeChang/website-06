@@ -23,8 +23,9 @@ function bentoIconSrc(slug: string) {
 
 function showcaseVideoSrc(slug: string) {
   if (slug === "bookee") return "/projects/bookee/bookee-showcase.mp4?v=20260422-145155"
-  if (slug === "playdates") return "/projects/playdates/playdates-showcase.mp4?v=20260422-1006"
+  if (slug === "playdates") return "/projects/playdates/playdates-showcase.mp4?v=20260422-180321"
   if (slug === "petcard") return "/projects/petcard/petcard-showcase.mp4?v=20260422-133413"
+  if (slug === "notion-client-intake") return "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260422-200559"
   if (slug === "mina") return "/projects/mina/mina-showcase.mp4?v=20260422-134052"
   return null
 }
