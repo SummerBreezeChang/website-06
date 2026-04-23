@@ -26,6 +26,7 @@ function showcaseVideoSrc(slug: string) {
   if (slug === "playdates") return "/projects/playdates/playdates-showcase.mp4?v=20260422-180321"
   if (slug === "petcard") return "/projects/petcard/petcard-showcase.mp4?v=20260422-133413"
   if (slug === "notion-client-intake") return "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260422-200559"
+  if (slug === "reelwish") return "/projects/reelwish/showcase.mp4?v=20260423-103435"
   if (slug === "mina") return "/projects/mina/mina-showcase.mp4?v=20260422-134052"
   return null
 }
@@ -44,14 +45,17 @@ export default function FeaturedShowcase({ projects }: Props) {
   const CARD_GAP_PX = 48
 
   const sectionRef = useRef<HTMLElement>(null)
+  const stickyPanelRef = useRef<HTMLDivElement>(null)
   const trackRef   = useRef<HTMLDivElement>(null)
   const counterRef = useRef<HTMLDivElement>(null)
+  const hasEnteredRef = useRef(false)
 
   useEffect(() => {
     const update = () => {
       const section = sectionRef.current
+      const stickyPanel = stickyPanelRef.current
       const track   = trackRef.current
-      if (!section || !track) return
+      if (!section || !track || !stickyPanel) return
 
       // Document-space top of the section, plus its total scrollable height
       const rect        = section.getBoundingClientRect()
@@ -64,6 +68,11 @@ export default function FeaturedShowcase({ projects }: Props) {
 
       const sy = window.scrollY
       const progress = Math.max(0, Math.min(1, (sy - sectionTop) / maxScroll))
+      const enterTriggerY = sectionTop - winH * 0.18
+      if (!hasEnteredRef.current && sy >= enterTriggerY) {
+        hasEnteredRef.current = true
+        stickyPanel.style.transform = "translateY(0px)"
+      }
       const rawIndex = progress * (N - 1)
       // Snap to project index so each scroll step advances one grouped card state.
       const active = Math.min(N - 1, Math.max(0, Math.round(rawIndex)))
@@ -100,7 +109,15 @@ export default function FeaturedShowcase({ projects }: Props) {
       style={{ height: `calc(${100 + (N - 1) * STEP_VH * 100}vh - 60px)` }}
     >
       {/* Sticky viewport panel with padding — creates inset effect */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden bg-background flex flex-col p-4 md:px-[60px] md:pb-[60px] md:pt-[120px]">
+      <div
+        ref={stickyPanelRef}
+        className="sticky top-0 h-screen w-full overflow-hidden bg-background flex flex-col p-4 md:px-[60px] md:pb-[60px] md:pt-[120px]"
+        style={{
+          transform: "translateY(140px)",
+          transition: "transform 700ms cubic-bezier(0.22, 1, 0.36, 1)",
+          willChange: "transform",
+        }}
+      >
 
         {/* Counter — top right (updated imperatively) */}
         <div

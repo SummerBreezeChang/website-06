@@ -5,6 +5,16 @@ import Navigation from "@/components/navigation"
 import { SectionRenderer } from "@/components/project-sections"
 import { projects } from "@/lib/projects-v2"
 
+function projectHeroVideoSrc(slug: string) {
+  if (slug === "bookee") return "/projects/bookee/bookee-showcase.mp4?v=20260422-145155"
+  if (slug === "playdates") return "/projects/playdates/playdates-showcase.mp4?v=20260422-180321"
+  if (slug === "petcard") return "/projects/petcard/petcard-showcase.mp4?v=20260422-133413"
+  if (slug === "notion-client-intake") return "/projects/notion-client-intake/notion-client-intake-showcase.mp4?v=20260422-200559"
+  if (slug === "reelwish") return "/projects/reelwish/showcase.mp4?v=20260423-103435"
+  if (slug === "mina") return "/projects/mina/mina-showcase.mp4?v=20260422-134052"
+  return null
+}
+
 export function generateStaticParams() {
   return projects.filter((p) => !p.externalUrl).map((p) => ({ slug: p.slug }))
 }
@@ -32,6 +42,7 @@ export default async function ProjectPage({
   const fromQuery = fromMore ? "from=more" : "from=home"
   const backHref = fromMore ? "/more" : "/#projects"
   const backLabel = fromMore ? "Back to all projects" : "Back to home"
+  const heroVideoSrc = projectHeroVideoSrc(p.slug)
 
   const navigable = projects.filter((x) => !x.externalUrl)
   const navIdx = navigable.findIndex((x) => x.slug === p.slug)
@@ -69,8 +80,22 @@ export default async function ProjectPage({
 
         {/* Hero image */}
         <div className="w-full aspect-[16/9] rounded-2xl mb-16 flex items-center justify-center overflow-hidden relative" style={{ backgroundColor: p.color }}>
-          <span className="text-white/40 text-xs text-center max-w-[260px] px-3 leading-relaxed z-10">{p.heroImage}</span>
-          <div className="absolute inset-0 rounded-2xl" style={{ border: "2px dashed rgba(255,255,255,0.15)" }} />
+          {heroVideoSrc ? (
+            <video
+              className="absolute inset-0 h-full w-full object-cover"
+              src={heroVideoSrc}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          ) : (
+            <>
+              <span className="text-white/40 text-xs text-center max-w-[260px] px-3 leading-relaxed z-10">{p.heroImage}</span>
+              <div className="absolute inset-0 rounded-2xl" style={{ border: "2px dashed rgba(255,255,255,0.15)" }} />
+            </>
+          )}
         </div>
 
         {/* tl;dr with optional stats sidebar */}

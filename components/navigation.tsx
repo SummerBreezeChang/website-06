@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Grid3X3, Moon, Sun } from "lucide-react"
 import { projects } from "@/lib/projects-v2"
 
-const caseStudySlugs = ["playdates", "notion-client-intake", "petcard", "tca", "mina", "bookee"]
+const caseStudySlugs = ["playdates", "notion-client-intake", "petcard", "reelwish", "mina", "bookee"]
 
 export default function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -128,9 +128,9 @@ export default function Navigation() {
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 8, scale: 0.98 }}
                     transition={{ duration: 0.18 }}
-                    className="absolute left-0 top-[calc(100%+12px)] w-[420px] rounded-2xl border border-border bg-card p-5 shadow-[0_24px_70px_-30px_rgba(15,23,42,0.3)] z-[260]"
+                    className="absolute left-0 top-[calc(100%+12px)] w-[760px] rounded-2xl border border-border bg-card p-5 shadow-[0_24px_70px_-30px_rgba(15,23,42,0.3)] z-[260]"
                   >
-                    <div className="space-y-1">
+                    <div className="grid grid-cols-2 gap-x-5 gap-y-1">
                       {caseStudies.map((item) => (
                         <Link
                           key={item!.slug}
